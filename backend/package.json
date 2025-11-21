@@ -1,0 +1,35 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "tsx src/server.ts",
+    "test": "vitest",
+    "db:seed": "tsx prisma/seed.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@fastify/cors": "^11.1.0",
+    "fastify": "^5.4.0",
+    "nanoid": "^5.1.6",
+    "supertest": "^7.1.4",
+    "vitest": "^3.2.4",
+    "ws": "^8.18.3",
+    "zod": "^4.1.11"
+  },
+  "devDependencies": {
+    "@prisma/client": "^6.17.1",
+    "@types/node": "^24.2.1",
+    "@types/supertest": "^6.0.3",
+    "@types/ws": "^8.18.1",
+    "i": "^0.3.7",
+    "npm": "^11.6.2",
+    "prisma": "^6.17.1",
+    "tsx": "^4.20.3",
+    "typescript": "^5.9.2"
+  }
+}

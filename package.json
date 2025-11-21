@@ -1,0 +1,18 @@
+{
+  "name": "rockbandpay-monorepo",
+  "private": true,
+  "scripts": {
+    "dev": "turbo dev --parallel",
+    "build": "turbo build",
+    "lint": "turbo lint"
+  },
+  "workspaces": [
+    "backend",
+    "admin-frontend",
+    "client-frontend"
+  ],
+  "devDependencies": {
+    "turbo": "latest"
+  },
+  "packageManager": "npm@latest"
+}

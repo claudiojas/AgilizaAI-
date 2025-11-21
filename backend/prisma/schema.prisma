@@ -1,0 +1,188 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Tabela de Mesas
+model Table {
+  id       String  @id @default(cuid())
+  number   Int     @unique
+  isActive Boolean @default(true)
+
+  // Relacionamentos
+  sessions Session[]
+
+  @@map("tables")
+}
+
+// Tabela de Sessões de Consumo
+model Session {
+  id        String        @id @default(cuid())
+  code      String        @unique // ID único da sessão
+  tableId   String
+  status    SessionStatus @default(ACTIVE)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  // Relacionamentos
+  table     Table     @relation(fields: [tableId], references: [id])
+  orders    Order[]
+  payments  Payment[]
+
+  @@map("sessions")
+}
+
+// Tabela de Categorias de Produtos
+model Category {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relacionamentos
+  products Product[]
+
+  @@map("categories")
+}
+
+// Tabela de Produtos
+model Product {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  price       Decimal  @db.Decimal(10, 2)
+  stock       Int      @default(0)
+  categoryId  String
+  isActive    Boolean  @default(true)
+  isSoldOut   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relacionamentos
+  category   Category   @relation(fields: [categoryId], references: [id])
+  orderItems OrderItem[]
+
+  @@map("products")
+}
+
+// Tabela de Pedidos
+model Order {
+  id             String      @id @default(cuid())
+  sessionId      String
+  status         OrderStatus @default(PENDING)
+  totalAmount    Decimal     @db.Decimal(10, 2) @default(0)
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  cashRegisterId String
+
+  // Relacionamentos
+  session      Session      @relation(fields: [sessionId], references: [id])
+  orderItems   OrderItem[]
+  payments     Payment[]
+  cashRegister CashRegister @relation(fields: [cashRegisterId], references: [id])
+
+  @@map("orders")
+}
+
+// Tabela de Itens do Pedido
+model OrderItem {
+  id         String   @id @default(cuid())
+  orderId    String
+  productId  String
+  quantity   Int
+  unitPrice  Decimal  @db.Decimal(10, 2)
+  totalPrice Decimal  @db.Decimal(10, 2)
+  createdAt  DateTime @default(now())
+
+  // Relacionamentos
+  order   Order   @relation(fields: [orderId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
+
+  @@map("order_items")
+}
+
+// Tabela de Pagamentos
+model Payment {
+  id             String        @id @default(cuid())
+  sessionId      String
+  orderId        String?       // Pode ser null se for pagamento direto
+  amount         Decimal       @db.Decimal(10, 2)
+  method         PaymentMethod
+  status         PaymentStatus @default(PENDING)
+  pixCode        String?       // Código PIX se aplicável
+  stripeId       String?       // ID do Stripe se aplicável
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  cashRegisterId String
+
+  // Relacionamentos
+  session      Session      @relation(fields: [sessionId], references: [id])
+  order        Order?       @relation(fields: [orderId], references: [id])
+  cashRegister CashRegister @relation(fields: [cashRegisterId], references: [id])
+
+  @@map("payments")
+}
+
+// Tabela de Caixa
+model CashRegister {
+  id           String             @id @default(cuid())
+  openedAt     DateTime           @default(now())
+  closedAt     DateTime?
+  status       CashRegisterStatus @default(OPEN)
+  initialValue Decimal?           @db.Decimal(10, 2)
+
+  // Relacionamentos
+  orders   Order[]
+  payments Payment[]
+
+  @@map("cash_registers")
+}
+
+// Enums
+enum SessionStatus {
+  ACTIVE
+  CLOSED
+}
+
+enum OrderStatus {
+  PENDING    // Pedido pendente
+  CONFIRMED  // Pedido confirmado
+  PREPARING  // Em preparação
+  READY      // Pronto para entrega
+  DELIVERED  // Entregue
+  CANCELLED  // Cancelado
+  PAID       // Pago
+}
+
+enum PaymentMethod {
+  PIX       // Pagamento PIX
+  CREDIT    // Cartão de crédito
+  DEBIT     // Cartão de débito
+  CASH      // Dinheiro
+  TRANSFER  // Transferência bancária
+}
+
+enum PaymentStatus {
+  PENDING    // Pagamento pendente
+  PROCESSING // Processando
+  COMPLETED  // Concluído
+  FAILED     // Falhou
+  REFUNDED   // Reembolsado
+}
+
+enum CashRegisterStatus {
+  OPEN
+  CLOSED
+}
