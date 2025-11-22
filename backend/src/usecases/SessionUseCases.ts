@@ -56,10 +56,18 @@ class SessionUseCases {
 
     async closeSession(id: string) {
         const validatedId = z.string().parse(id);
-        const session = await SessionRepository.closeSession(validatedId);
-        if (!session) {
-            throw new Error("Session not found")
+
+        const sessionExists = await SessionRepository.findById(validatedId);
+        if (!sessionExists) {
+            throw new Error("Session not found");
         }
+
+        const hasActiveOrders = await OrderRepository.hasActiveOrders(validatedId);
+        if (hasActiveOrders) {
+            throw new Error("Cannot close session: There are active orders pending.");
+        }
+
+        const session = await SessionRepository.closeSession(validatedId);
         
         notificationHub.broadcastToKitchen({
             type: 'SESSION_CLOSED',

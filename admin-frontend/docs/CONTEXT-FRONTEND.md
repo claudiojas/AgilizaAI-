@@ -1,6 +1,6 @@
-# Contexto do Desenvolvimento do Frontend - RockBandPay
+# Contexto do Desenvolvimento do Frontend - AgilizAI
 
-Este documento descreve o estado atual, a arquitetura e os fluxos de trabalho da aplicação frontend do RockBandPay.
+Este documento descreve o estado atual, a arquitetura e os fluxos de trabalho da aplicação frontend do AgilizAI.
 
 ## 1. Arquitetura e Gerenciamento de Estado
 
@@ -27,6 +27,7 @@ A aplicação é dividida em telas com responsabilidades claras:
 - **Fluxo de Criação:** Permite criar novas mesas informando seu número.
 - **Fluxo de Arquivamento (Soft Delete):** Permite selecionar múltiplas mesas e "Arquivá-las". Isso chama o endpoint `POST /tables/archive` que apenas desativa as mesas (`isActive = false`), preservando o histórico de vendas. A tela possui uma trava de segurança que impede o arquivamento de mesas que tenham sessões ativas.
 - **Fluxo de Início de Sessão Manual:** Para cada mesa livre, há um botão "Iniciar Sessão". Isso permite que o gerente inicie uma sessão para clientes que não usam o QR Code, chamando o endpoint `POST /sessions`.
+- **Fluxo de Fechamento de Sessão:** Para cada mesa com uma sessão ativa, um botão "Fechar Sessão" é exibido. Ao ser acionado, ele chama o endpoint `PATCH /sessions/:id/close`. O backend valida se não há pedidos com status `PENDING`, `PREPARING` ou `READY` antes de alterar o status da sessão para `CLOSED`, prevenindo o fechamento de contas com consumo em aberto.
 
 ### c. Painel de Controle (Rota: `/overview`)
 - **Arquivo:** `src/routes/overview.lazy.tsx`

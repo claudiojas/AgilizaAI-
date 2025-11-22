@@ -115,25 +115,16 @@ export async function sessionRoutes(app: FastifyInstance) {
         const { id } = getSessionSchema.parse(request.params)
         try {
             const session = await SessionUseCases.closeSession(id);
-
-            notificationHub.broadcastToKitchen({
-                type: 'SESSION_CLOSED',
-                payload: { sessionId: session.id }
-            });
-
             return reply.send(session)
         } catch (error: any) {
+            if (error.message.includes("active orders pending")) {
+                return reply.status(409).send({ error: error.message });
+            }
             if (error.message === "Session not found") {
-                return reply.status(404).send({
-                    success: false,
-                    error: error.message
-                });
+                return reply.status(404).send({ error: error.message });
             }
             console.error(`Error closing session ${id}:`, error);
-            return reply.status(500).send({
-                success: false,
-                error: "Unable to close session."
-            });
+            return reply.status(500).send({ error: "Unable to close session." });
         }
     });
 }

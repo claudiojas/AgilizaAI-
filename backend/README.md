@@ -1,8 +1,8 @@
-# RockBandPay API
+# AgilizAI API
 
-# RockBandPay API
+# AgilizAI API
 
-API backend para o sistema de comanda digital RockBandPay. Construída para ser rápida, escalável e fácil de manter, esta API gerencia todas as operações do sistema, desde o controle de mesas e sessões de consumo até o processamento de pedidos e notificações em tempo real para a cozinha.
+API backend para o sistema de comanda digital AgilizAI. Construída para ser rápida, escalável e fácil de manter, esta API gerencia todas as operações do sistema, desde o controle de mesas e sessões de consumo até o processamento de pedidos e notificações em tempo real para a cozinha.
 
 ## Features
 

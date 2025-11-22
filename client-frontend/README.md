@@ -1,4 +1,4 @@
-# RockBandPay - Customer Frontend
+# AgilizAI - Customer Frontend
 
 Esta é a aplicação frontend voltada para o cliente, projetada para ser acessada através de um QR Code na mesa do estabelecimento. Ela permite que o cliente tenha autonomia para visualizar o cardápio, fazer pedidos e acompanhar o status do seu consumo em tempo real.
 

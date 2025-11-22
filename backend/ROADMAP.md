@@ -1,6 +1,6 @@
-# Roadmap de Desenvolvimento - RockBandPay
+# Roadmap de Desenvolvimento - AgilizAI
 
-Este documento descreve as fases de desenvolvimento do sistema RockBandPay, desde a sua concepção como um MVP de instância única até a sua evolução para uma plataforma SaaS multi-tenant.
+Este documento descreve as fases de desenvolvimento do sistema AgilizAI, desde a sua concepção como um MVP de instância única até a sua evolução para uma plataforma SaaS multi-tenant.
 
 ---
 
@@ -49,7 +49,7 @@ O foco desta fase foi implementar a lógica de negócio principal que torna o si
 
 ## Fase 4: Transição para Arquitetura SaaS Multi-Tenant
 
-**Visão:** Transformar o RockBandPay (já com as funcionalidades de garçom automatizado) em uma plataforma SaaS (Software as a Service), onde múltiplos clientes (tenants) possam usar a mesma aplicação de forma segura e isolada.
+**Visão:** Transformar o AgilizAI (já com as funcionalidades de garçom automatizado) em uma plataforma SaaS (Software as a Service), onde múltiplos clientes (tenants) possam usar a mesma aplicação de forma segura e isolada.
 
 **Arquitetura Escolhida:** **Banco de Dados por Tenant.**
 

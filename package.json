@@ -1,5 +1,5 @@
 {
-  "name": "rockbandpay-monorepo",
+  "name": "agilizai-monorepo",
   "private": true,
   "scripts": {
     "dev": "turbo dev --parallel",
@@ -14,5 +14,5 @@
   "devDependencies": {
     "turbo": "latest"
   },
-  "packageManager": "npm@latest"
+  "packageManager": "npm@11.6.0"
 }

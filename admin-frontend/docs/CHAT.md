@@ -1,6 +1,6 @@
-# Histórico da Conversa - RockBandPay
+# Histórico da Conversa - AgilizAI
 
-Este arquivo resume as decisões, a arquitetura e o progresso do desenvolvimento do projeto RockBandPay, cobrindo tanto o backend quanto o frontend.
+Este arquivo resume as decisões, a arquitetura e o progresso do desenvolvimento do projeto AgilizAI, cobrindo tanto o backend quanto o frontend.
 
 ## Visão e Estado Atual
 

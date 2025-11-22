@@ -1,6 +1,6 @@
-# RockBandPay - Admin & Kitchen Frontend
+# AgilizAI - Admin & Kitchen Frontend
 
-Esta é a aplicação frontend para a equipe do estabelecimento, servindo como a interface principal para gerenciamento e operações do sistema RockBandPay.
+Esta é a aplicação frontend para a equipe do estabelecimento, servindo como a interface principal para gerenciamento e operações do sistema AgilizAI.
 
 ## Features
 

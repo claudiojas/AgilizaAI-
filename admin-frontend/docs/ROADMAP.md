@@ -1,4 +1,4 @@
-# Roadmap de Desenvolvimento - RockBandPay Frontend
+# Roadmap de Desenvolvimento - AgilizAI Frontend
 
 ---
 

@@ -30,6 +30,7 @@ export interface ISessionMethods {
 export interface IOrderMethods {
     createOrder(data: ICreateOrder): Promise<{order: IOrder, sessionId: string}>;
     findOrdersBySessionId(sessionId: string): Promise<IOrder[] | null>;
+    hasActiveOrders(sessionId: string): Promise<boolean>;
     findAllOrders(): Promise<IOrder[]>;
     deleteOrder(orderId: string): Promise<IOrder>;
 }

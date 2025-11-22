@@ -1,6 +1,6 @@
-# Guia Técnico Interno: RockBandPay API
+# Guia Técnico Interno: AgilizAI API
 
-Este documento detalha a arquitetura, os padrões de projeto e os fluxos de negócio críticos do backend do RockBandPay. O objetivo é servir como um guia para desenvolvedores que trabalham na manutenção e evolução do sistema.
+Este documento detalha a arquitetura, os padrões de projeto e os fluxos de negócio críticos do backend do AgilizAI. O objetivo é servir como um guia para desenvolvedores que trabalham na manutenção e evolução do sistema.
 
 ---
 

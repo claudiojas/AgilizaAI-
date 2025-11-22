@@ -2,7 +2,7 @@
 import { createLazyFileRoute } from '@tanstack/react-router';
 import { useState } from 'react';
 import { api } from '../lib/axios';
-import { useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { QRCodeCanvas } from 'qrcode.react';
 import { useTableContext } from '@/contexts/TableContext';
 import { useActiveSessions } from '@/hooks/useActiveSessions';
@@ -20,6 +20,20 @@ function ManageTables() {
   const [tableNumber, setTableNumber] = useState('');
   const [message, setMessage] = useState('');
   const [selectedTableIds, setSelectedTableIds] = useState<string[]>([]);
+
+  const closeSessionMutation = useMutation({
+    mutationFn: (sessionId: string) => {
+        return api.patch(`/sessions/${sessionId}/close`);
+    },
+    onSuccess: () => {
+        setMessage('Sessão fechada com sucesso!');
+        queryClient.invalidateQueries({ queryKey: ['active-sessions'] });
+    },
+    onError: (error: any) => {
+        const errorMessage = error.response?.data?.error || 'Não foi possível fechar a sessão.';
+        setMessage(`Erro: ${errorMessage}`);
+    }
+  });
 
   const handleSelectTable = (tableId: string) => {
     setSelectedTableIds(prev => 
@@ -79,6 +93,12 @@ function ManageTables() {
     }
   };
 
+  const handleCloseSession = (sessionId: string) => {
+      if (window.confirm('Tem certeza que deseja fechar esta sessão? Isso só funcionará se não houver pedidos pendentes.')) {
+          closeSessionMutation.mutate(sessionId);
+      }
+  }
+
   const getTableUrl = (tableId: string) => {
     const host = window.location.hostname;
     const customerAppUrl = `http://${host}:5173`; 
@@ -135,7 +155,7 @@ function ManageTables() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {tables.sort((a, b) => a.tableNumber - b.tableNumber).map(table => {
                 const isSelected = selectedTableIds.includes(table.id);
-                const isActive = activeSessions?.some(s => s.tableId === table.id);
+                const activeSession = activeSessions?.find(s => s.tableId === table.id);
                 return (
                   <div key={table.id} className={`relative bg-gray-800 p-4 rounded-lg flex flex-col items-center gap-4 transition-all ${isSelected ? 'ring-2 ring-blue-500' : ''}`}>
                     <input 
@@ -147,7 +167,7 @@ function ManageTables() {
                     <div className="flex items-center gap-3 pt-6">
                       <h4 className="text-xl font-bold text-amber-400">Mesa {table.tableNumber}</h4>
 <p className="text-xs text-gray-500">ID: {table.id}</p>
-                      {isActive && <span className="text-xs bg-green-500 text-white font-bold py-1 px-2 rounded-full">ATIVA</span>}
+                      {activeSession && <span className="text-xs bg-green-500 text-white font-bold py-1 px-2 rounded-full">ATIVA</span>}
                     </div>
                     <div className="bg-white p-4 rounded-md">
                       <QRCodeCanvas
@@ -160,13 +180,27 @@ function ManageTables() {
                       />
                     </div>
                     <p className="text-xs text-gray-400 text-center break-all w-full truncate">{getTableUrl(table.id)}</p>
-                    <Button 
-                      onClick={() => handleStartSession(table.id)}
-                      disabled={isActive}
-                      className="w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-600 disabled:cursor-not-allowed"
-                    >
-                      {isActive ? 'Sessão em Andamento' : 'Iniciar Sessão'}
-                    </Button>
+                    <div className="w-full flex flex-col gap-2">
+                      <Button 
+                        onClick={() => handleStartSession(table.id)}
+                        disabled={!!activeSession}
+                        className="w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-600 disabled:cursor-not-allowed"
+                      >
+                        {activeSession ? 'Sessão em Andamento' : 'Iniciar Sessão'}
+                      </Button>
+                      {activeSession && (
+                        <Button 
+                          variant="destructive"
+                          onClick={() => handleCloseSession(activeSession.sessionId)}
+                          disabled={closeSessionMutation.isPending}
+                          className="w-full"
+                        >
+                          {closeSessionMutation.isPending && closeSessionMutation.variables === activeSession.sessionId 
+                            ? 'Fechando...' 
+                            : 'Fechar Sessão'}
+                        </Button>
+                      )}
+                    </div>
                   </div>
                 );
               })}

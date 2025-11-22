@@ -99,6 +99,11 @@ class OrderRepository implements IOrderMethods {
             include: {
                 table: true,
                 orders: {
+                    where: {
+                        status: {
+                            not: 'CANCELLED'
+                        }
+                    },
                     include: {
                         orderItems: {
                             include: {
@@ -175,6 +180,17 @@ class OrderRepository implements IOrderMethods {
         ]);
 
         return deletedOrder;
+    }
+    async hasActiveOrders(sessionId: string): Promise<boolean> {
+        const activeOrder = await prisma.order.findFirst({
+            where: {
+                sessionId: sessionId,
+                status: {
+                    in: ['PENDING', 'PREPARING', 'READY']
+                }
+            }
+        });
+        return !!activeOrder;
     }
 };
 
