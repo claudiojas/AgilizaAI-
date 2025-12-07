@@ -38,40 +38,6 @@ const Header = ({ title, subtitle }: HeaderProps) => {
           />
         </div>
 
-        {/* Notifications */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" className="relative">
-              <Bell className="h-5 w-5" />
-              <Badge className="absolute -right-1 -top-1 h-5 w-5 justify-center p-0 text-xs">
-                3
-              </Badge>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-80">
-            <DropdownMenuLabel>Notificações</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem className="flex flex-col items-start gap-1 py-3">
-              <span className="font-medium">Novo pedido - Mesa 5</span>
-              <span className="text-xs text-muted-foreground">
-                2 minutos atrás
-              </span>
-            </DropdownMenuItem>
-            <DropdownMenuItem className="flex flex-col items-start gap-1 py-3">
-              <span className="font-medium">Pedido pronto - Mesa 3</span>
-              <span className="text-xs text-muted-foreground">
-                5 minutos atrás
-              </span>
-            </DropdownMenuItem>
-            <DropdownMenuItem className="flex flex-col items-start gap-1 py-3">
-              <span className="font-medium">Estoque baixo: Picanha</span>
-              <span className="text-xs text-muted-foreground">
-                15 minutos atrás
-              </span>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-
         {/* User Menu */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
