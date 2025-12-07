@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { createLazyFileRoute } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
 import { api } from '../lib/axios'
 import { MenuTable } from '../components/menu/MenuTable'
@@ -8,6 +9,10 @@ import { Cart } from '../components/cart/Cart';
 
 import type { Product, CartItem, IOrder } from '../types';
 import { MyOrders } from '../components/orders/MyOrders';
+
+export const Route = createLazyFileRoute('/')({
+  component: Index,
+})
 
 export function Index() {
   const [sessionId, setSessionId] = useState<string | null>(
