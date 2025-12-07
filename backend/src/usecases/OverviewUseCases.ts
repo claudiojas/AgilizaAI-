@@ -2,6 +2,22 @@ import OverviewRepository from "../repositories/OverviewRepository";
 import { prisma } from "../BD/prisma.config";
 
 class OverviewUseCases {
+    async getDashboardSummary() {
+        const [sales, orders, activeSessions, totalTables] = await OverviewRepository.getTodaySummary();
+
+        const totalRevenue = sales._sum.amount?.toNumber() || 0;
+        const totalOrders = orders || 0;
+        const averageTicket = totalOrders > 0 ? totalRevenue / totalOrders : 0;
+
+        return {
+            totalRevenue,
+            totalOrders,
+            averageTicket,
+            activeSessions,
+            totalTables,
+        };
+    }
+
     async getSalesOverTime(period: 'week' | 'month') {
         const now = new Date();
         let startDate = new Date();

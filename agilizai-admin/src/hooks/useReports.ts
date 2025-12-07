@@ -24,6 +24,14 @@ export const useSalesByPaymentMethodQuery = (period: Period) => {
   });
 };
 
+export const useDashboardSummaryQuery = () => {
+  return useQuery({
+    queryKey: ['reports', 'dashboardSummary'],
+    queryFn: () => reportsService.getDashboardSummary(),
+    staleTime: 1000 * 60, // 1 minute
+  });
+};
+
 export const useSalesByTableQuery = (period: Period) => {
   return useQuery({
     queryKey: ['reports', 'salesByTable', period],

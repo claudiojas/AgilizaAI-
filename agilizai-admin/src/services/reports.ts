@@ -18,6 +18,11 @@ export const reportsService = {
     return data;
   },
 
+  getDashboardSummary: async () => {
+    const { data } = await api.get('/overview/summary');
+    return data;
+  },
+
   getSalesByTable: async (period: Period) => {
     const { data } = await api.get('/reports/sales-by-table', { params: { period } });
     return data;

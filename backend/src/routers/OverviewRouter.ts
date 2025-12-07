@@ -3,6 +3,19 @@ import OverviewUseCases from "../usecases/OverviewUseCases";
 
 export async function overviewRoutes(app: FastifyInstance) {
 
+    app.get('/overview/summary', async (request, reply) => {
+        try {
+            const summary = await OverviewUseCases.getDashboardSummary();
+            return reply.send(summary);
+        } catch (error) {
+            console.error("Error fetching dashboard summary:", error);
+            return reply.status(500).send({
+                success: false,
+                error: "Unable to fetch dashboard summary."
+            });
+        }
+    });
+
     app.get('/overview/sessions', async (request, reply) => {
         try {
             const activeSessions = await OverviewUseCases.getActiveSessionsOverview();

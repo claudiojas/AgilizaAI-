@@ -8,11 +8,13 @@ import {
   Settings,
   LogOut,
   Zap,
+  Home, // Importar o ícone Home
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 
 const navigation = [
+  { name: 'Dashboard', href: '/dashboard', icon: Home }, // Novo item de navegação
   { name: 'Mesas', href: '/tables', icon: LayoutGrid },
   { name: 'Cozinha', href: '/kitchen', icon: ChefHat },
   { name: 'Cardápio', href: '/menu', icon: UtensilsCrossed },
@@ -26,7 +28,7 @@ const Sidebar = () => {
     <aside className="fixed left-0 top-0 z-40 h-screen w-64 bg-sidebar text-sidebar-foreground">
       <div className="flex h-full flex-col">
         {/* Logo */}
-        <div className="flex h-16 items-center gap-2 px-6">
+        <Link to="/dashboard" className="flex h-16 items-center gap-2 px-6">
           <div className="flex h-10 w-10 items-center justify-center rounded-lg gradient-primary">
             <Zap className="h-6 w-6 text-primary-foreground" />
           </div>
@@ -34,7 +36,7 @@ const Sidebar = () => {
             <h1 className="text-lg font-bold">AgilizAI</h1>
             <p className="text-xs text-sidebar-foreground/60">Admin Panel</p>
           </div>
-        </div>
+        </Link>
 
         <Separator className="bg-sidebar-border" />
 

@@ -70,6 +70,31 @@ class OverviewRepository {
         return salesBySession;
     }
 
+    async getTodaySummary() {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        return prisma.$transaction([
+            // Total de vendas hoje
+            prisma.payment.aggregate({
+                _sum: { amount: true },
+                where: { createdAt: { gte: today } }
+            }),
+            // Total de pedidos hoje
+            prisma.order.count({
+                where: { createdAt: { gte: today } }
+            }),
+            // Sessões ativas
+            prisma.session.count({
+                where: { status: 'ACTIVE' }
+            }),
+            // Total de mesas ativas
+            prisma.table.count({
+                where: { isActive: true }
+            })
+        ]);
+    }
+
     async getActiveSessionsOverview() {
         const activeSessions = await prisma.session.findMany({
             where: { status: 'ACTIVE' },
