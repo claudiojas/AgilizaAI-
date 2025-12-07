@@ -41,8 +41,10 @@ const TableCard = ({
   const activeSession = 'activeSession' in table ? table.activeSession as Session : undefined;
 
   const elapsedTime = useMemo(() => {
-    if (!activeSession) return null;
-    return formatDistanceToNow(new Date(activeSession.createdAt), {
+    if (!activeSession || !activeSession.createdAt) return null;
+    const date = new Date(activeSession.createdAt);
+    if (isNaN(date.getTime())) return null;
+    return formatDistanceToNow(date, {
       locale: ptBR,
       addSuffix: false,
     });
