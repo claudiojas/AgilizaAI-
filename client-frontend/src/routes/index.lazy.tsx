@@ -9,6 +9,8 @@ import { Cart } from '../components/cart/Cart';
 
 import type { Product, CartItem, IOrder } from '../types';
 import { MyOrders } from '../components/orders/MyOrders';
+import { BottomNav } from '@/components/layout/BottomNav';
+import type { ViewType } from '@/components/layout/BottomNav';
 
 export const Route = createLazyFileRoute('/')({
   component: Index,
@@ -25,6 +27,8 @@ export function Index() {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
   const [cart, setCart] = useState<CartItem[]>([])
   const [newlyPlacedOrder, setNewlyPlacedOrder] = useState<IOrder | null>(null);
+
+  const [activeView, setActiveView] = useState<ViewType>('menu');
 
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search);
@@ -107,8 +111,8 @@ export function Index() {
 
   if (error) {
     return (
-      <div className="p-4 font-sans bg-gray-900 text-white min-h-screen flex items-center justify-center">
-        <div className="bg-red-500/20 border border-red-500 text-red-300 p-4 rounded-lg max-w-md text-center">
+      <div className="p-4 flex items-center justify-center text-center min-h-screen">
+        <div className="bg-red-500/20 border border-red-500 text-red-300 p-4 rounded-lg max-w-md">
           <h2 className="font-bold">Erro</h2>
           <p>{error}</p>
         </div>
@@ -118,14 +122,14 @@ export function Index() {
 
   if (!sessionId) {
     return (
-        <div className="p-4 font-sans bg-gray-900 text-white min-h-screen flex items-center justify-center">
+        <div className="p-4 flex items-center justify-center min-h-screen">
             <p>Iniciando sessão...</p>
         </div>
     )
   }
 
   return (
-    <div className="p-4 md:p-8 font-sans bg-gray-900 text-white min-h-screen">
+    <div className="p-4 md:p-8 font-sans text-white min-h-screen">
       <div className="max-w-4xl mx-auto pb-32 md:pb-16">
         <header className="text-center mb-8">
             <h1 className="text-4xl font-bold text-amber-400">Cardápio RockBandPay</h1>
@@ -133,6 +137,7 @@ export function Index() {
         </header>
         
         <main>
+            {/* Por enquanto, o conteúdo principal não muda */}
             <MenuTable onProductSelect={handleProductSelect} />
         </main>
 
@@ -150,6 +155,8 @@ export function Index() {
           sessionId={sessionId}
           onOrderPlaced={handleOrderPlaced}
         />
+
+        <BottomNav activeView={activeView} setActiveView={setActiveView} />
       </div>
     </div>
   )

@@ -3,9 +3,10 @@ import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
 
 export const rootRoute = createRootRoute({
   component: () => (
-    <>
-      <Outlet />
-      <TanStackRouterDevtools />
-    </>
+    <div className="font-sans bg-gray-900 text-white min-h-screen">
+        <Outlet />
+      {import.meta.env.DEV && <TanStackRouterDevtools position="bottom-right" />}
+    </div>
   ),
 })
+
