@@ -6,11 +6,18 @@ import { notificationHub } from "../utils/NotificationHub";
 
 const codeSchema = z.string();
 
+import TableRepository from "../repositories/TableRepository";
+
 class SessionUseCases {
     async createSession(data: ICreateSession): Promise<ISession> {
+        // Verifica se a mesa existe
+        const tableExists = await TableRepository.findById(data.tableId);
+        if (!tableExists) {
+            throw new Error('Table not found.');
+        }
+
         // Verifica se já existe uma sessão ativa para esta mesa
         const existingActiveSession = await SessionRepository.findActiveSessionByTableId(data.tableId);
-
         if (existingActiveSession) {
             throw new Error('This table already has an active session.');
         }

@@ -12,6 +12,13 @@ class TableRepository {
         return table;
     }
 
+    async findById(id: string): Promise<ITable | null> {
+        const table = await prisma.table.findUnique({
+            where: { id },
+        });
+        return table;
+    }
+
     async getAllTables(): Promise<ITable[]> {
         const tables = await prisma.table.findMany({
             where: { isActive: true },

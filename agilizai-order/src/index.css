@@ -1,0 +1,184 @@
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Warm food-inspired palette */
+    --background: 20 14% 4%;
+    --foreground: 40 40% 98%;
+
+    --card: 20 14% 8%;
+    --card-foreground: 40 40% 98%;
+
+    --popover: 20 14% 6%;
+    --popover-foreground: 40 40% 98%;
+
+    /* Amber/Orange primary - appetizing */
+    --primary: 32 95% 55%;
+    --primary-foreground: 20 14% 4%;
+
+    --secondary: 20 14% 14%;
+    --secondary-foreground: 40 40% 98%;
+
+    --muted: 20 14% 18%;
+    --muted-foreground: 40 20% 60%;
+
+    --accent: 32 95% 45%;
+    --accent-foreground: 40 40% 98%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 40 40% 98%;
+
+    --border: 20 14% 18%;
+    --input: 20 14% 14%;
+    --ring: 32 95% 55%;
+
+    --radius: 1rem;
+
+    /* Status colors */
+    --status-pending: 220 14% 50%;
+    --status-preparing: 45 93% 47%;
+    --status-ready: 142 76% 36%;
+    --status-delivered: 173 80% 40%;
+
+    /* Custom tokens */
+    --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+    --nav-height: 5rem;
+    --cart-float-height: 4rem;
+
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(32 95% 55%) 0%, hsl(25 95% 50%) 100%);
+    --gradient-card: linear-gradient(180deg, hsl(20 14% 10%) 0%, hsl(20 14% 6%) 100%);
+    --gradient-overlay: linear-gradient(180deg, transparent 0%, hsl(20 14% 4% / 0.9) 100%);
+
+    /* Shadows */
+    --shadow-soft: 0 4px 24px -4px hsl(32 95% 55% / 0.15);
+    --shadow-elevated: 0 8px 32px -8px hsl(0 0% 0% / 0.5);
+    --shadow-glow: 0 0 40px hsl(32 95% 55% / 0.3);
+  }
+
+  .light {
+    --background: 40 40% 98%;
+    --foreground: 20 14% 8%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 20 14% 8%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 20 14% 8%;
+
+    --primary: 32 95% 50%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 40 30% 94%;
+    --secondary-foreground: 20 14% 8%;
+
+    --muted: 40 20% 90%;
+    --muted-foreground: 20 14% 45%;
+
+    --accent: 32 95% 45%;
+    --accent-foreground: 0 0% 100%;
+
+    --border: 40 20% 88%;
+    --input: 40 20% 90%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    -webkit-tap-highlight-color: transparent;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-family: 'Sora', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Hide scrollbar but keep functionality */
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-primary text-primary-foreground font-semibold rounded-xl px-6 py-3;
+    @apply transition-all duration-200 active:scale-95;
+    @apply shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-glow)];
+  }
+
+  .card-product {
+    @apply bg-card rounded-2xl overflow-hidden;
+    @apply transition-all duration-300 active:scale-[0.98];
+    box-shadow: var(--shadow-elevated);
+  }
+
+  .bottom-nav {
+    @apply fixed bottom-0 left-0 right-0 z-50;
+    @apply bg-background/90 backdrop-blur-xl border-t border-border;
+    padding-bottom: var(--safe-area-bottom);
+  }
+
+  .safe-area-bottom {
+    padding-bottom: calc(var(--nav-height) + var(--safe-area-bottom));
+  }
+
+  .floating-cart {
+    @apply fixed left-4 right-4 z-40;
+    bottom: calc(var(--nav-height) + var(--safe-area-bottom) + 1rem);
+  }
+
+  .status-badge {
+    @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium;
+  }
+
+  .status-pending {
+    @apply bg-[hsl(var(--status-pending)/0.2)] text-[hsl(var(--status-pending))];
+  }
+
+  .status-preparing {
+    @apply bg-[hsl(var(--status-preparing)/0.2)] text-[hsl(var(--status-preparing))];
+  }
+
+  .status-ready {
+    @apply bg-[hsl(var(--status-ready)/0.2)] text-[hsl(var(--status-ready))];
+  }
+
+  .status-delivered {
+    @apply bg-[hsl(var(--status-delivered)/0.2)] text-[hsl(var(--status-delivered))];
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-clip-text text-transparent;
+    background-image: var(--gradient-primary);
+  }
+
+  .animate-pulse-soft {
+    animation: pulse-soft 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  @keyframes pulse-soft {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+  }
+
+  .touch-feedback {
+    @apply transition-all duration-150 active:scale-95 active:opacity-80;
+  }
+}
