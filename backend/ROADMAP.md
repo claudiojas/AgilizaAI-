@@ -57,6 +57,26 @@ O foco desta fase foi implementar a lógica de negócio principal que torna o si
 
 ---
 
+## Fase 6: Implementação de Autenticação (Concluído)
+
+**Visão:** Proteger o painel administrativo para garantir que apenas usuários autorizados possam acessar e gerenciar os dados do restaurante.
+
+### Itens Desenvolvidos:
+
+1.  **Modelo de Usuário:**
+    *   **Status:** Concluído.
+    *   **Ação:** Adicionado o modelo `User` ao schema do Prisma, com campos para email, senha (criptografada) e nível de acesso (`role`).
+
+2.  **Autenticação com JWT:**
+    *   **Status:** Concluído.
+    *   **Ação:** Implementadas as rotas `/auth/login`, `/auth/logout` e `/auth/me`. O login gera um token JWT que é armazenado em um cookie `HttpOnly` no navegador.
+
+3.  **Proteção de Rotas:**
+    *   **Status:** Concluído.
+    *   **Ação:** Um hook global foi implementado para proteger todas as rotas da API, exceto as de autenticação, garantindo que apenas requisições com um token JWT válido sejam processadas.
+
+---
+
 ## Fase 5: Relatórios e Integrações (Em Andamento)
 
 Esta fase foca em agregar valor ao negócio através da análise de dados e da integração com serviços externos.

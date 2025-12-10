@@ -12,6 +12,7 @@ API backend para o sistema de comanda digital AgilizAI. Construída para ser rá
 - **Painel da Cozinha em Tempo Real:** Notifica a cozinha instantaneamente sobre novos pedidos e atualizações de status via WebSockets.
 - **Fluxo de Caixa:** Abertura e fechamento de caixa para registro de transações.
 - **Dashboard e Relatórios:** Endpoints otimizados para fornecer dados para painéis de visualização e relatórios de vendas.
+- **Autenticação por JWT:** Sistema de login seguro com senhas criptografadas e tokens JWT armazenados em cookies HttpOnly para proteger as rotas administrativas.
 - **Exclusão Lógica (Soft Delete):** Itens como mesas são desativados em vez de excluídos para manter a integridade do histórico.
 
 ## Tech Stack
@@ -19,6 +20,7 @@ API backend para o sistema de comanda digital AgilizAI. Construída para ser rá
 - **Framework:** **[Fastify](https://www.fastify.io/)** - Alta performance e baixo overhead.
 - **Linguagem:** **[TypeScript](https://www.typescriptlang.org/)** - Código seguro e escalável com tipagem estática.
 - **ORM:** **[Prisma](https://www.prisma.io/)** - ORM moderno que garante interações com o banco de dados totalmente tipadas.
+- **Autenticação:** **[@fastify/jwt](https://github.com/fastify/fastify-jwt)** e **[bcryptjs](https://github.com/dcodeIO/bcrypt.js)** - Para geração de tokens e hashing de senhas.
 - **WebSockets:** **[ws](https://github.com/websockets/ws)** - Biblioteca de WebSocket robusta e performática, integrada diretamente ao servidor HTTP do Fastify.
 - **Banco de Dados:** **[PostgreSQL](https://www.postgresql.org/)** - Sistema de banco de dados relacional open-source.
 - **Testes:** **[Vitest](https://vitest.dev/)** - Executor de testes rápido com API compatível com Jest.
@@ -107,6 +109,7 @@ O sistema utiliza WebSockets para comunicação em tempo real, essencial para a 
 
 Abaixo, uma visão geral dos principais endpoints disponíveis.
 
+-   **Autenticação:** `POST /auth/login`, `POST /auth/logout`, `GET /auth/me`
 -   **Caixa:** `POST /cash-register/open`, `POST /cash-register/close`
 -   **Mesas:** `POST /tables`, `GET /tables`
 -   **Sessões:** `POST /sessions`, `GET /sessions/table/:tableId/active`, `PATCH /sessions/:id/close`

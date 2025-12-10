@@ -47,6 +47,33 @@ A comunicação em tempo real é um pilar do sistema. A implementação foi refa
 
 ---
 
+## 4. Fluxo de Autenticação com JWT e Cookies HttpOnly
+
+A segurança do painel administrativo é garantida por um robusto sistema de autenticação baseado em JSON Web Tokens (JWT) e cookies `HttpOnly`.
+
+-   **Processo de Login:**
+    1.  O cliente envia credenciais (email e senha) para `POST /auth/login`.
+    2.  O Fastify verifica as credenciais. Se válidas, um JWT é gerado usando `@fastify/jwt`.
+    3.  Este JWT é então assinado e enviado ao cliente como um cookie `HttpOnly` (`access_token`). Este tipo de cookie é inacessível via JavaScript no navegador, prevenindo ataques de Cross-Site Scripting (XSS).
+    4.  O cookie é configurado com `SameSite: 'Lax'` e `Secure: true` (em produção) para aumentar a segurança contra ataques de Cross-Site Request Forgery (CSRF).
+
+-   **Verificação de Autenticação (`GET /auth/me`):**
+    1.  O frontend pode chamar `GET /auth/me` para verificar se existe uma sessão ativa.
+    2.  O navegador envia automaticamente o cookie `access_token` para o backend (devido à configuração do cookie).
+    3.  A rota `/auth/me` utiliza um hook `onRequest` para chamar `request.jwtVerify()`. Este método, provido pelo `@fastify/jwt`, verifica o token no cookie.
+    4.  Se o token for válido e não expirado, o `request.user` é populado com o payload do JWT, e os dados do usuário podem ser retornados ao frontend.
+
+-   **Proteção de Rotas:**
+    1.  Todas as rotas que exigem autenticação são registradas em um bloco `app.register` que possui um hook `onRequest` que executa `await request.jwtVerify()`.
+    2.  Se o JWT for inválido ou não estiver presente (no cookie), o `request.jwtVerify()` lançará um erro, resultando em uma resposta `401 Unauthorized` para o cliente.
+    3.  Isso garante que apenas usuários com tokens válidos (e, portanto, logados) possam acessar funcionalidades restritas.
+
+-   **Logout (`POST /auth/logout`):**
+    1.  Ao fazer logout, o cliente envia uma requisição para `POST /auth/logout`.
+    2.  O backend simplesmente limpa o cookie `access_token` no navegador, invalidando a sessão do usuário.
+
+---
+
 ## 3. Fluxos de Negócio Críticos
 
 Compreender estes fluxos é essencial para dar manutenção no sistema.
