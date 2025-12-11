@@ -42,11 +42,17 @@ class SessionRepositorie implements ISessionMethods {
         return session;
     }
 
-    async findActiveSessionByTableId(tableId: string): Promise<ISession | null> {
+    async findActiveSessionByTableNumber(tableNumber: string): Promise<ISession | null> {
         const session = await prisma.session.findFirst({
             where: {
-                tableId: tableId,
+                table: {
+                    number: parseInt(tableNumber, 10),
+                },
                 status: 'ACTIVE'
+            },
+            include: {
+                table: true,
+                orders: true,
             }
         });
         return session;

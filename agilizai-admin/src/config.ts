@@ -1,3 +1,3 @@
 export const config = {
-  appUrl: 'http://localhost:3002',
+  appUrl: `http://${window.location.hostname}:3002`,
 };

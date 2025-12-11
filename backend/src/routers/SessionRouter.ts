@@ -72,22 +72,22 @@ export async function sessionRoutes(app: FastifyInstance) {
         }
     });
 
-    app.get('/sessions/table/:tableId/active', async (request, reply) => {
+    app.get('/sessions/table/:tableNumber/active', async (request, reply) => {
         const getSessionSchema = z.object({
-            tableId: z.string()
+            tableNumber: z.string()
         })
-        const { tableId } = getSessionSchema.parse(request.params)
+        const { tableNumber } = getSessionSchema.parse(request.params)
         try {
-            const session = await SessionUseCases.findActiveSessionByTableId(tableId);
-            return reply.send(session);
-        } catch (error: any) {
-            if (error.message.includes("No active session found")) {
+            const session = await SessionUseCases.findActiveSessionByTableNumber(tableNumber);
+            if (!session) {
                 return reply.status(404).send({
                     success: false,
-                    error: error.message
+                    error: "No active session found for this table"
                 });
             }
-            console.error(`Error fetching active session for table ${tableId}:`, error);
+            return reply.send(session);
+        } catch (error: any) {
+            console.error(`Error fetching active session for table ${tableNumber}:`, error);
             return reply.status(500).send({
                 success: false,
                 error: "Unable to search for active session."
