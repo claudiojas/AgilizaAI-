@@ -1,16 +1,19 @@
 import { NavLink, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { UtensilsCrossed, ClipboardList, Receipt } from 'lucide-react';
+import { UtensilsCrossed, ClipboardList, Receipt, ShoppingBag } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useCart } from '@/contexts/CartContext';
 
 const navItems = [
   { path: '/', label: 'Cardápio', icon: UtensilsCrossed },
   { path: '/orders', label: 'Pedidos', icon: ClipboardList },
+  { path: '/cart', label: 'Carrinho', icon: ShoppingBag },
   { path: '/bill', label: 'Conta', icon: Receipt },
 ];
 
 export function BottomNav() {
   const location = useLocation();
+  const { itemCount } = useCart();
 
   return (
     <nav className="bottom-nav">
@@ -27,7 +30,7 @@ export function BottomNav() {
             >
               <motion.div
                 className={cn(
-                  "flex flex-col items-center gap-1 py-2 px-4 rounded-2xl transition-colors",
+                  "relative flex flex-col items-center gap-1 py-2 px-4 rounded-2xl transition-colors",
                   isActive ? "text-primary" : "text-muted-foreground"
                 )}
                 whileTap={{ scale: 0.9 }}
@@ -52,6 +55,16 @@ export function BottomNav() {
                 )}>
                   {item.label}
                 </span>
+
+                {item.path === '/cart' && itemCount > 0 && (
+                  <motion.span
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    className="absolute top-0 right-1 w-5 h-5 bg-primary text-primary-foreground text-xs font-bold rounded-full flex items-center justify-center"
+                  >
+                    {itemCount}
+                  </motion.span>
+                )}
               </motion.div>
             </NavLink>
           );

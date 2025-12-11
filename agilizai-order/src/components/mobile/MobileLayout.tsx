@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 import { BottomNav } from './BottomNav';
-import { FloatingCart } from './FloatingCart';
+
 import { useSession } from '@/contexts/SessionContext';
 import { Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -80,9 +80,6 @@ export function MobileLayout({ children }: MobileLayoutProps) {
           {children}
         </AnimatePresence>
       </main>
-
-      {/* Floating cart indicator */}
-      <FloatingCart />
 
       {/* Bottom navigation */}
       <BottomNav />
