@@ -47,13 +47,12 @@ class OrderUseCases {
         return order;
     }
 
-    async findOrdersBySessionId(sessionId: string): Promise<any | null> {
+    async findOrdersBySessionId(sessionId: string): Promise<IOrder[]> {
         const validatedSessionId = sessionIdSchema.parse(sessionId);
-        const sessionDetails = await OrderRepository.findOrdersBySessionId(validatedSessionId);
-        if (!sessionDetails) {
-            throw new Error("No session found.");
-        }
-        return sessionDetails;
+        const result = await OrderRepository.findOrdersBySessionId(validatedSessionId);
+        // If the session doesn't exist, repository returns null. If it exists but has no orders, it returns { orders: [] }.
+        // In either case, returning an empty array is safe for the frontend.
+        return result ? result.orders : [];
     }
 
     async addOrderItem(orderId: string, itemData: OrderItemData): Promise<IOrderItem> {

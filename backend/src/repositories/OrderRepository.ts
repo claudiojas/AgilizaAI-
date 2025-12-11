@@ -91,13 +91,12 @@ class OrderRepository implements IOrderMethods {
     }
 
 
-    async findOrdersBySessionId(sessionId: string): Promise<any | null> {
-        const orders = await prisma.session.findUnique({
+    async findOrdersBySessionId(sessionId: string): Promise<{ orders: IOrder[] } | null> {
+        const sessionWithOrders = await prisma.session.findUnique({
             where: {
                 id: sessionId,
             },
-            include: {
-                table: true,
+            select: {
                 orders: {
                     where: {
                         status: {
@@ -110,11 +109,14 @@ class OrderRepository implements IOrderMethods {
                                 product: true
                             }
                         }
+                    },
+                    orderBy: {
+                        createdAt: 'desc'
                     }
                 }
             }
         });
-        return orders;
+        return sessionWithOrders;
     }
 
     async findOrdersByStatus(status: OrderStatus): Promise<IOrder[]> {
