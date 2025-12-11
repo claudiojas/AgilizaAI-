@@ -1,0 +1,55 @@
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { cashRegisterService } from '@/services/cashRegister';
+import { toast } from '@/hooks/use-toast';
+
+export const useActiveCashRegister = () => {
+  return useQuery({
+    queryKey: ['activeCashRegister'],
+    queryFn: cashRegisterService.getActive,
+    staleTime: Infinity, // This data is critical and should be refetched manually or via invalidation
+  });
+};
+
+export const useOpenCashRegisterMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (initialValue: number) => cashRegisterService.open(initialValue),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['activeCashRegister'] });
+      toast({
+        title: 'Caixa Aberto',
+        description: 'O caixa foi aberto com sucesso.',
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: 'Erro ao Abrir Caixa',
+        description: error.response?.data?.error || 'Não foi possível abrir o caixa.',
+        variant: 'destructive',
+      });
+    },
+  });
+};
+
+export const useCloseCashRegisterMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: cashRegisterService.close,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['activeCashRegister'] });
+      toast({
+        title: 'Caixa Fechado',
+        description: 'O caixa foi fechado com sucesso.',
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: 'Erro ao Fechar Caixa',
+        description: error.response?.data?.error || 'Não foi possível fechar o caixa.',
+        variant: 'destructive',
+      });
+    },
+  });
+};

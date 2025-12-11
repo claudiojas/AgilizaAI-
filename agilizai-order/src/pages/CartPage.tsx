@@ -101,7 +101,7 @@ export default function CartPage() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="min-h-screen flex flex-col pb-32"
+      className="min-h-screen flex flex-col pb-48"
     >
       {/* Header */}
       <div className="px-4 pt-4 pb-2 flex items-center gap-3">
@@ -174,7 +174,7 @@ export default function CartPage() {
       </div>
 
       {/* Fixed bottom checkout */}
-      <div className="fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur-xl border-t border-border p-4 pb-safe-bottom">
+      <div className="fixed bottom-[var(--nav-height)] left-0 right-0 bg-background/95 backdrop-blur-xl border-t border-border p-4 pb-safe-bottom">
         <div className="flex items-center justify-between mb-4">
           <span className="text-muted-foreground">Total</span>
           <span className="text-2xl font-bold text-primary">{formatPrice(total)}</span>

@@ -101,3 +101,16 @@ export interface WSOrderStatusEvent {
 }
 
 export type WSEvent = WSNewOrderEvent | WSOrderStatusEvent;
+
+// Cash Register Types
+export type CashRegisterStatus = 'OPEN' | 'CLOSED';
+
+export interface CashRegister {
+  id: string;
+  status: CashRegisterStatus;
+  openedAt: string;
+  closedAt?: string | null;
+  initialValue: number;
+  totalInvoiced?: number;
+  totalPayments?: number;
+}
