@@ -45,4 +45,15 @@ export async function cashRegisterRoutes(app: FastifyInstance) {
             return reply.status(500).send({ error: "Internal Server Error" });
         }
     });
+
+    app.get('/cash-registers/history', async (request, reply) => {
+        try {
+            const { startDate, endDate } = request.query as { startDate?: string, endDate?: string };
+            const history = await CashRegisterUseCases.getHistory({ startDate, endDate });
+            return reply.status(200).send(history);
+        } catch (error: any) {
+            console.error("Error getting cash register history:", error);
+            return reply.status(500).send({ error: "Internal Server Error" });
+        }
+    });
 }

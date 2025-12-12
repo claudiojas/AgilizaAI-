@@ -8,17 +8,19 @@ import {
   Settings,
   LogOut,
   Zap,
-  Home, // Importar o ícone Home
+  Home,
+  Archive, // Importar o ícone Archive
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 
 const navigation = [
-  { name: 'Dashboard', href: '/dashboard', icon: Home }, // Novo item de navegação
+  { name: 'Dashboard', href: '/dashboard', icon: Home },
   { name: 'Mesas', href: '/tables', icon: LayoutGrid },
   { name: 'Cozinha', href: '/kitchen', icon: ChefHat },
   { name: 'Cardápio', href: '/menu', icon: UtensilsCrossed },
   { name: 'Relatórios', href: '/reports', icon: BarChart3 },
+  { name: 'Caixas', href: '/cash-registers', icon: Archive }, // Novo item de navegação
 ];
 
 const Sidebar = () => {

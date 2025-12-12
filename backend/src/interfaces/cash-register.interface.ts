@@ -19,9 +19,9 @@ export interface IPaymentBreakdown {
 export interface IActiveCashRegisterDetails {
     id: string;
     openedAt: Date;
-    initialValue: Decimal | null;
+    initialValue: number; // Changed from Decimal | null
     totalPayments: number;
-    expectedInCash: number;
+    finalValue: number; // Changed from expectedInCash
     paymentsBreakdown: IPaymentBreakdown[];
     soldProducts: ISoldProduct[];
 }

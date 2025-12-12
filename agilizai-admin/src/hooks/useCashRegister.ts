@@ -39,6 +39,7 @@ export const useCloseCashRegisterMutation = (options: { onSuccess?: (data: any) 
     mutationFn: cashRegisterService.close,
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['activeCashRegister'] });
+      queryClient.invalidateQueries({ queryKey: ['cashRegistersHistory'] }); // Invalidate history too
       toast({
         title: 'Caixa Fechado',
         description: 'O caixa foi fechado com sucesso.',
@@ -52,5 +53,13 @@ export const useCloseCashRegisterMutation = (options: { onSuccess?: (data: any) 
         variant: 'destructive',
       });
     },
+  });
+};
+
+export const useCashRegisterHistoryQuery = (filters?: { startDate?: string, endDate?: string }) => {
+  return useQuery({
+    queryKey: ['cashRegistersHistory', filters],
+    queryFn: () => cashRegisterService.getHistory(filters),
+    enabled: true, // Always enabled, just refetch on filter change
   });
 };

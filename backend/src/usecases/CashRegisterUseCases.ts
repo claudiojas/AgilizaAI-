@@ -8,29 +8,34 @@ class CashRegisterUseCases {
         const payments = await CashRegisterRepository.getPaymentsByRegisterId(openRegister.id);
         const orderItems = await CashRegisterRepository.getOrderItemsByRegisterId(openRegister.id);
 
-        const totalPayments = payments.reduce((sum, payment) => sum + payment.amount.toNumber(), 0);
+        const totalPayments = payments.reduce((sum, payment) => {
+            const amount = payment.amount ? payment.amount.toNumber() : 0;
+            return sum + amount;
+        }, 0);
 
         const paymentsBreakdown = payments.reduce((acc, payment) => {
+            const amount = payment.amount ? payment.amount.toNumber() : 0;
             const existing = acc.find(p => p.method === payment.method);
             if (existing) {
-                existing.total += payment.amount.toNumber();
+                existing.total += amount;
             } else {
-                acc.push({ method: payment.method, total: payment.amount.toNumber() });
+                acc.push({ method: payment.method, total: amount });
             }
             return acc;
         }, [] as IPaymentBreakdown[]);
 
         const soldProducts = orderItems.reduce((acc, item) => {
+            const totalValue = item.totalPrice ? item.totalPrice.toNumber() : 0;
             const existing = acc.find(p => p.productId === item.productId);
             if (existing) {
                 existing.quantity += item.quantity;
-                existing.totalValue += item.totalPrice.toNumber();
+                existing.totalValue += totalValue;
             } else {
                 acc.push({
                     productId: item.productId,
                     name: item.product.name,
                     quantity: item.quantity,
-                    totalValue: item.totalPrice.toNumber()
+                    totalValue: totalValue
                 });
             }
             return acc;
@@ -86,6 +91,24 @@ class CashRegisterUseCases {
         }
 
         return this._calculateRegisterSummary(openRegister);
+    }
+
+    async getHistory(filters?: { startDate?: string, endDate?: string }): Promise<CashRegister[]> {
+        let startDate: Date | undefined;
+        let endDate: Date | undefined;
+
+        if (filters?.startDate) {
+            startDate = new Date(filters.startDate);
+            // Set to start of day
+            startDate.setUTCHours(0, 0, 0, 0);
+        }
+        if (filters?.endDate) {
+            endDate = new Date(filters.endDate);
+            // Set to end of day
+            endDate.setUTCHours(23, 59, 59, 999);
+        }
+
+        return await CashRegisterRepository.getHistory(startDate, endDate);
     }
 }
 

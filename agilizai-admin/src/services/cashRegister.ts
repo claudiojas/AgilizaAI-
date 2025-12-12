@@ -23,4 +23,9 @@ export const cashRegisterService = {
     const { data } = await api.post('/cash-register/close');
     return data;
   },
+
+  getHistory: async (filters?: { startDate?: string, endDate?: string }): Promise<CashRegister[]> => {
+    const { data } = await api.get('/cash-registers/history', { params: filters });
+    return data;
+  },
 };

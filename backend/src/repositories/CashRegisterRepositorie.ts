@@ -49,6 +49,21 @@ class CashRegisterRepository {
             }
         });
     }
+
+    async getHistory(startDate?: Date, endDate?: Date) {
+        return await prisma.cashRegister.findMany({
+            where: {
+                status: 'CLOSED',
+                closedAt: {
+                    gte: startDate,
+                    lte: endDate,
+                }
+            },
+            orderBy: {
+                closedAt: 'desc'
+            }
+        });
+    }
 }
 
 export default new CashRegisterRepository();

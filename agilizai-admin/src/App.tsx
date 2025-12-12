@@ -9,6 +9,7 @@ import KitchenPage from "./pages/KitchenPage";
 import MenuPage from "./pages/MenuPage";
 import ReportsPage from "./pages/ReportsPage";
 import SessionDetailPage from "./pages/SessionDetailPage";
+import CashRegistersPage from "./pages/CashRegistersPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient({
@@ -31,6 +32,7 @@ const App = () => (
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/tables" element={<TablesPage />} />
           <Route path="/sessions/:sessionId" element={<SessionDetailPage />} />
+          <Route path="/cash-registers" element={<CashRegistersPage />} />
           <Route path="/kitchen" element={<KitchenPage />} />
           <Route path="/menu" element={<MenuPage />} />
           <Route path="/reports" element={<ReportsPage />} />
