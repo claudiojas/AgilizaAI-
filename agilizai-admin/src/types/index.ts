@@ -102,6 +102,9 @@ export interface WSOrderStatusEvent {
 
 export type WSEvent = WSNewOrderEvent | WSOrderStatusEvent;
 
+// Payment Types
+export type PaymentMethod = 'CASH' | 'CREDIT_CARD' | 'DEBIT_CARD' | 'PIX';
+
 // Cash Register Types
 export type CashRegisterStatus = 'OPEN' | 'CLOSED';
 
