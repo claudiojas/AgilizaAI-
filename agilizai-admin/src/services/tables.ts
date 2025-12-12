@@ -32,7 +32,7 @@ export const tablesService = {
   },
 
   closeSession: async (sessionId: string): Promise<void> => {
-    await api.post(`/sessions/${sessionId}/close`);
+    await api.patch(`/sessions/${sessionId}/close`);
   },
 
   getQRCode: async (tableId: string): Promise<string> => {
