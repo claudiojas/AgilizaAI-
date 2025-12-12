@@ -8,6 +8,7 @@ const productCreateSchema = z.object({
   categoryId: z.string().min(1, "Category ID is required"),
   description: z.string().optional(),
   stock: z.number().int().optional(),
+  imageUrl: z.string().url().optional().or(z.literal('')),
 });
 
 const productUpdateSchema = productCreateSchema.partial();
