@@ -119,11 +119,8 @@ class OverviewRepository {
             }, 0);
 
             return {
-                sessionId: session.id,
-                tableNumber: session.table.number,
-                tableId: session.table.id,
+                ...session, // Return the full session object, which includes the 'id'
                 totalConsumed: totalConsumed,
-                activeOrders: session.orders, // Retorna os pedidos para detalhamento no frontend
             };
         });
 
