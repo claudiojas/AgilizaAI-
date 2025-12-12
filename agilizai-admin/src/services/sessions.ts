@@ -35,6 +35,11 @@ export const sessionsService = {
     return data;
   },
 
+  getById: async (id: string): Promise<Session> => {
+    const { data } = await api.get(`/sessions/id/${id}`);
+    return data;
+  },
+
   close: async (sessionId: string): Promise<Session> => {
     const { data } = await api.patch(`/sessions/${sessionId}/close`);
     return data;

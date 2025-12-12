@@ -9,3 +9,11 @@ export const useActiveSessionsQuery = () => {
   });
 };
 
+export const useSessionQuery = (sessionId: string) => {
+  return useQuery({
+    queryKey: ['sessions', sessionId],
+    queryFn: () => sessionsService.getById(sessionId),
+    enabled: !!sessionId,
+  });
+};
+

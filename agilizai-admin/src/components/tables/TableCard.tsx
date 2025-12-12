@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { QRCodeCanvas } from 'qrcode.react';
@@ -35,10 +36,11 @@ const TableCard = ({
   onCloseSession,
   onGenerateQR,
 }: TableCardProps) => {
+  const navigate = useNavigate();
   const [showQRDialog, setShowQRDialog] = useState(false);
   
   const hasActiveSession = 'hasActiveSession' in table && table.hasActiveSession;
-  const activeSession = 'activeSession' in table ? table.activeSession as Session : undefined;
+  const activeSession = 'activeSession' in table ? table.activeSession as Session & { totalConsumed?: number } : undefined;
 
   const elapsedTime = useMemo(() => {
     if (!activeSession || !activeSession.createdAt) return null;
@@ -50,10 +52,7 @@ const TableCard = ({
     });
   }, [activeSession]);
 
-  const totalAmount = useMemo(() => {
-    if (!activeSession?.orders) return 0;
-    return activeSession.orders.reduce((sum, order) => sum + Number(order.totalAmount), 0);
-  }, [activeSession]);
+  const totalAmount = activeSession?.totalConsumed ?? 0;
 
   const statusConfig = hasActiveSession
     ? {
@@ -61,6 +60,7 @@ const TableCard = ({
         bgClass: 'bg-destructive/10',
         borderClass: 'border-destructive/30 hover:border-destructive/50',
         dotClass: 'bg-destructive animate-pulse',
+        cursorClass: 'cursor-pointer',
       }
     : table.isActive
     ? {
@@ -68,12 +68,14 @@ const TableCard = ({
         bgClass: 'bg-success/10',
         borderClass: 'border-success/30 hover:border-success/50',
         dotClass: 'bg-success',
+        cursorClass: '',
       }
     : {
         label: 'Arquivada',
         bgClass: 'bg-muted/10',
         borderClass: 'border-muted/30 hover:border-muted/50',
         dotClass: 'bg-muted',
+        cursorClass: 'cursor-not-allowed',
       };
 
   const formatCurrency = (value: number) => {
@@ -83,12 +85,20 @@ const TableCard = ({
     }).format(value);
   };
 
+  const handleCardClick = () => {
+    if (hasActiveSession && activeSession) {
+      navigate(`/sessions/${activeSession.id}`);
+    }
+  };
+
   return (
     <>
       <Card
+        onClick={handleCardClick}
         className={cn(
           'group relative overflow-hidden border-2 transition-all duration-300 hover:shadow-elevated',
-          statusConfig.borderClass
+          statusConfig.borderClass,
+          statusConfig.cursorClass
         )}
       >
         {/* Status indicator bar */}
@@ -114,18 +124,19 @@ const TableCard = ({
                   variant="ghost"
                   size="icon"
                   className="h-8 w-8 opacity-0 transition-opacity group-hover:opacity-100"
+                  onClick={(e) => e.stopPropagation()}
                 >
                   <MoreVertical className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => setShowQRDialog(true)}>
+                <DropdownMenuItem onClick={(e) => { e.stopPropagation(); setShowQRDialog(true); }}>
                   <QrCode className="mr-2 h-4 w-4" />
                   Ver QR Code
                 </DropdownMenuItem>
                 {hasActiveSession && activeSession && (
                   <DropdownMenuItem
-                    onClick={() => onCloseSession(activeSession.id)}
+                    onClick={(e) => { e.stopPropagation(); onCloseSession(activeSession.id); }}
                     className="text-destructive"
                   >
                     Fechar conta
@@ -163,19 +174,11 @@ const TableCard = ({
               <p className="mt-1 text-xl font-bold text-foreground">
                 {formatCurrency(totalAmount)}
               </p>
-              <Button
-                variant="outline"
-                size="sm"
-                className="mt-2 w-full"
-                onClick={() => onCloseSession(activeSession.id)}
-              >
-                Fechar Conta
-              </Button>
             </div>
           ) : table.isActive ? (
             <Button
               className="w-full gap-2 gradient-success text-success-foreground shadow-md transition-all hover:shadow-lg"
-              onClick={() => onOpenSession(table.id)}
+              onClick={(e) => { e.stopPropagation(); onOpenSession(table.id); }}
             >
               <Plus className="h-4 w-4" />
               Abrir Sessão
@@ -198,7 +201,6 @@ const TableCard = ({
             </DialogDescription>
           </DialogHeader>
           <div className="flex flex-col items-center justify-center p-6">
-            {/* Placeholder for QR Code */}
             <QRCodeCanvas
               value={`${config.appUrl}/?tableId=${table.id}`}
               size={192}

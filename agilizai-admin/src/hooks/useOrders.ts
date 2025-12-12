@@ -1,8 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { ordersService } from '@/services/orders';
-import type { Order, OrderStatus } from '@/types';
+import { ordersService, ICreateOrder } from '@/services/orders';
 import { toast } from '@/hooks/use-toast';
+import type { Order, OrderStatus } from '@/types'; // Import Order and OrderStatus
 
+// Hooks related to general orders (e.g., for KitchenPage, old useOrders.ts content)
 export const useOrdersQuery = (status?: OrderStatus) => {
   return useQuery({
     queryKey: ['orders', status],
@@ -50,6 +51,38 @@ export const useUpdateOrderStatusMutation = () => {
       toast({
         title: 'Erro',
         description: 'Não foi possível atualizar o status do pedido.',
+        variant: 'destructive',
+      });
+    },
+  });
+};
+
+// New hooks (for SessionDetailPage, my previous useOrders.ts content)
+export const useOrdersBySessionQuery = (sessionId: string) => {
+  return useQuery({
+    queryKey: ['orders', 'session', sessionId],
+    queryFn: () => ordersService.getBySession(sessionId),
+    enabled: !!sessionId,
+  });
+};
+
+export const useCreateOrderMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (orderData: ICreateOrder) => ordersService.create(orderData),
+    onSuccess: (data) => {
+      // Invalidate the orders for the specific session to refetch
+      queryClient.invalidateQueries({ queryKey: ['orders', 'session', data.sessionId] });
+      toast({
+        title: 'Pedido adicionado',
+        description: 'O novo pedido foi adicionado à sessão.',
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: 'Erro ao adicionar pedido',
+        description: error.response?.data?.error || 'Não foi possível adicionar o pedido.',
         variant: 'destructive',
       });
     },
