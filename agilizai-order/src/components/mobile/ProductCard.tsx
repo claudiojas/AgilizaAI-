@@ -30,7 +30,11 @@ export function ProductCard({ product, onSelect, index = 0 }: ProductCardProps) 
     >
       {/* Product Image Placeholder */}
       <div className="relative aspect-[4/3] overflow-hidden bg-secondary flex items-center justify-center">
-        <span className="text-6xl">🍽️</span>
+        {product.imageUrl ? (
+          <img src={product.imageUrl} alt={product.name} className="object-cover w-full h-full" />
+        ) : (
+          <span className="text-6xl">🍽️</span>
+        )}
         
         {/* Gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />

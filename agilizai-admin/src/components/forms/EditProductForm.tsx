@@ -21,33 +21,34 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Category } from "@/types";
+import { Category, Product } from "@/types";
 
 const formSchema = z.object({
   name: z.string().min(2, "O nome do produto é obrigatório."),
   description: z.string().optional(),
-  imageUrl: z.string().url("URL da imagem inválida.").optional().or(z.literal('')), // New imageUrl field
+  imageUrl: z.string().url("URL da imagem inválida.").optional().or(z.literal('')),
   price: z.coerce.number().positive("O preço deve ser um número positivo."),
   stock: z.coerce.number().int().min(0, "O estoque não pode ser negativo."),
   categoryId: z.string({ required_error: "Selecione uma categoria." }),
 });
 
-interface CreateProductFormProps {
+interface EditProductFormProps {
+  product: Product;
   categories: Category[];
   onSubmit: (values: z.infer<typeof formSchema>) => void;
-  onOpenCreateCategory: () => void;
   isLoading: boolean;
 }
 
-export function CreateProductForm({ categories, onSubmit, onOpenCreateCategory, isLoading }: CreateProductFormProps) {
+export function EditProductForm({ product, categories, onSubmit, isLoading }: EditProductFormProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
-      description: "",
-      imageUrl: "", // Set default value for imageUrl
-      price: 0,
-      stock: 0,
+      name: product.name,
+      description: product.description || "",
+      imageUrl: product.imageUrl || "",
+      price: product.price,
+      stock: product.stock,
+      categoryId: product.categoryId,
     },
   });
 
@@ -142,19 +143,15 @@ export function CreateProductForm({ categories, onSubmit, onOpenCreateCategory, 
                     ))}
                   </SelectContent>
                 </Select>
-                <Button type="button" variant="outline" onClick={onOpenCreateCategory}>
-                  Nova
-                </Button>
               </div>
               <FormMessage />
             </FormItem>
           )}
         />
         <Button type="submit" disabled={isLoading}>
-          {isLoading ? "Salvando..." : "Salvar Produto"}
+          {isLoading ? "Salvando..." : "Salvar Alterações"}
         </Button>
       </form>
     </Form>
   );
 }
-

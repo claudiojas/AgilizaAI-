@@ -23,6 +23,7 @@ export interface Product {
   name: string;
   description: string | null;
   price: number;
+  imageUrl?: string | null; // Added imageUrl
   stock: number;
   categoryId: string;
   category?: Category;

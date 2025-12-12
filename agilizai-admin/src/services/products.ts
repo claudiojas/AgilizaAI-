@@ -21,4 +21,13 @@ export const productsService = {
     const { data } = await api.post('/categorie', categoryData);
     return data;
   },
+
+  update: async (id: string, productData: Partial<Product>): Promise<Product> => {
+    const { data } = await api.patch(`/products/${id}`, productData);
+    return data;
+  },
+
+  delete: async (id: string): Promise<void> => {
+    await api.delete(`/products/${id}`);
+  },
 };
