@@ -200,7 +200,7 @@ const TableCard = ({
           <div className="flex flex-col items-center justify-center p-6">
             {/* Placeholder for QR Code */}
             <QRCodeCanvas
-              value={`${config.appUrl}/?table=${table.number}`}
+              value={`${config.appUrl}/?tableId=${table.id}`}
               size={192}
               bgColor="#ffffff"
               fgColor="#000000"
@@ -208,7 +208,7 @@ const TableCard = ({
               className="rounded-lg"
             />
             <p className="mt-4 text-center text-sm text-muted-foreground">
-              agilizai.app/?table={table.number}
+              {`${config.appUrl.replace(/https?:\/\//, '')}/?tableId=${table.id.substring(0, 12)}...`}
             </p>
           </div>
           <div className="flex justify-center gap-2">

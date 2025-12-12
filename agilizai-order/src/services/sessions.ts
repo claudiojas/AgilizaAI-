@@ -14,6 +14,18 @@ export const sessionsService = {
     }
   },
 
+  getActiveByTableId: async (tableId: string): Promise<Session | null> => {
+    try {
+      const { data } = await api.get(`/sessions/table/id/${tableId}/active`);
+      return data;
+    } catch (error: any) {
+      if (error.response?.status === 404) {
+        return null;
+      }
+      throw error;
+    }
+  },
+
   create: async (tableId: string): Promise<Session> => {
     const { data } = await api.post('/sessions', { tableId });
     return data;

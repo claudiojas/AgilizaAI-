@@ -11,20 +11,17 @@ import TableRepository from "../repositories/TableRepository";
 
 class SessionUseCases {
     async createSession(data: ICreateSession): Promise<ISession> {
-        // O `data.tableId` aqui é, na verdade, o número da mesa vindo do frontend
-        const tableNumber = parseInt(data.tableId, 10);
-        if (isNaN(tableNumber)) {
-            throw new Error('Invalid table number.');
-        }
+        // Valida se o tableId é um CUID
+        const validatedTableId = z.string().cuid().parse(data.tableId);
 
         // Verifica se a mesa existe
-        const table = await TableRepository.findByNumber(tableNumber);
+        const table = await TableRepository.findById(validatedTableId);
         if (!table) {
             throw new Error('Table not found.');
         }
 
-        // Verifica se já existe uma sessão ativa para esta mesa, usando o ID correto
-        const existingActiveSession = await SessionRepository.findActiveSessionByTableNumber(String(tableNumber));
+        // Verifica se já existe uma sessão ativa para esta mesa
+        const existingActiveSession = await SessionRepository.findActiveSessionByTableId(validatedTableId);
         if (existingActiveSession) {
             throw new Error('This table already has an active session.');
         }
@@ -51,6 +48,15 @@ class SessionUseCases {
         const session = await SessionRepository.findSessionByCode(validatedCode);
         if (!session) {
             throw new Error("Session not found")
+        }
+        return session;
+    }
+
+    async findActiveSessionByTableId(tableId: string) {
+        const validatedTableId = z.string().cuid().parse(tableId);
+        const session = await SessionRepository.findActiveSessionByTableId(validatedTableId);
+        if (!session) {
+            return null;
         }
         return session;
     }

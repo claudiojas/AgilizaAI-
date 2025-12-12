@@ -25,18 +25,14 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
     setError(null);
 
     try {
-      // 1. Get tableId from URL
+      // 1. Get tableId (CUID) from URL
       const params = new URLSearchParams(window.location.search);
-      const urlTableId = params.get('table');
+      const urlTableId = params.get('tableId');
 
       if (!urlTableId) {
-        // Demo mode - use default table
-        setTableId('12');
-        let demoSession = await sessionsService.getActiveByTable('12');
-        if (!demoSession) {
-          demoSession = await sessionsService.create('12');
-        }
-        setSession(demoSession);
+        // Fallback for environments without a QR code, like local development.
+        // This is not ideal for production. A proper landing page or scanner app would be better.
+        setError("ID da mesa não fornecido. Escaneie o QR code da sua mesa.");
         setIsLoading(false);
         return;
       }
@@ -56,23 +52,23 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
             return;
           }
         } catch (err) {
-          // Session not found or invalid, continue to check for active session
+          // Session not found or invalid, proceed to create a new one.
         }
       }
 
       // 4. No valid session - check if there's an active one for this table
-      let activeSession = await sessionsService.getActiveByTable(urlTableId);
+      let activeSession = await sessionsService.getActiveByTableId(urlTableId);
       
       if (!activeSession) {
-        // 5. Create new session
+        // 5. Create new session if no active one exists
         activeSession = await sessionsService.create(urlTableId);
       }
 
-      // 6. Save session ID
+      // 6. Save session ID to localStorage
       localStorage.setItem(`${STORAGE_KEY}_id_${urlTableId}`, activeSession.id);
       setSession(activeSession);
     } catch (err) {
-      setError('Erro ao conectar. Tente novamente.');
+      setError('Erro ao conectar. Tente escanear o QR code novamente.');
       console.error('Session init error:', err);
     } finally {
       setIsLoading(false);
