@@ -26,14 +26,11 @@ export const useKitchenWebSocket = () => {
         switch (wsEvent.type) {
           case 'NEW_ORDER':
             // Add new order to cache and show notification
-            queryClient.setQueryData<Order[]>(['orders', 'kitchen'], (old) => {
-              if (!old) return [wsEvent.payload];
-              return [wsEvent.payload, ...old];
-            });
+            queryClient.invalidateQueries({ queryKey: ['orders', 'kitchen'] });
 
             toast({
               title: '🔔 Novo Pedido!',
-              description: `Mesa ${wsEvent.payload.tableNumber} - ${wsEvent.payload.items.length} item(s)`,
+              description: `Mesa ${wsEvent.payload.session?.table?.number} - ${wsEvent.payload.orderItems?.length} item(s)`,
             });
 
             // Play notification sound
@@ -76,6 +73,65 @@ export const useKitchenWebSocket = () => {
     connect();
     return disconnect;
   }, [connect, disconnect]);
+
+  return { isConnected: wsRef.current?.readyState === WebSocket.OPEN };
+};
+
+export const useSessionWebSocket = (sessionId: string) => {
+  const queryClient = useQueryClient();
+  const wsRef = useRef<WebSocket | null>(null);
+  const reconnectTimeoutRef = useRef<NodeJS.Timeout>();
+
+  const connect = useCallback(() => {
+    if (wsRef.current?.readyState === WebSocket.OPEN) return;
+
+    const ws = new WebSocket(`${WS_URL}/ws/kitchen`); // Connect to the same kitchen endpoint
+
+    ws.onopen = () => {
+      console.log(`WebSocket connected for session ${sessionId}`);
+    };
+
+    ws.onmessage = (event) => {
+      try {
+        const wsEvent: WSEvent = JSON.parse(event.data);
+        
+        // Invalidate session orders on any relevant update
+        if (wsEvent.type === 'NEW_ORDER' || wsEvent.type === 'ORDER_STATUS_UPDATED') {
+          queryClient.invalidateQueries({ queryKey: ['orders', 'session', sessionId] });
+        }
+        
+      } catch (error) {
+        console.error('Error parsing WebSocket message for session:', error);
+      }
+    };
+
+    ws.onclose = () => {
+      console.log('Session WebSocket disconnected, attempting to reconnect...');
+      reconnectTimeoutRef.current = setTimeout(connect, 5000);
+    };
+
+    ws.onerror = (error) => {
+      console.error('Session WebSocket error:', error);
+      ws.close();
+    };
+
+    wsRef.current = ws;
+  }, [queryClient, sessionId]);
+
+  const disconnect = useCallback(() => {
+    if (reconnectTimeoutRef.current) {
+      clearTimeout(reconnectTimeoutRef.current);
+    }
+    wsRef.current?.close();
+    wsRef.current = null;
+  }, []);
+
+  useEffect(() => {
+    if (sessionId) {
+      connect();
+    }
+    return disconnect;
+  }, [sessionId, connect, disconnect]);
 
   return { isConnected: wsRef.current?.readyState === WebSocket.OPEN };
 };

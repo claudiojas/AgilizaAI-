@@ -3,14 +3,29 @@ import { useParams } from 'react-router-dom';
 import { DashboardLayout } from '@/components/layout';
 import { useSessionQuery } from '@/hooks/useSessions';
 import { useOrdersBySessionQuery, useCreateOrderMutation } from '@/hooks/useOrders';
+import { useSessionWebSocket } from '@/hooks/useWebSocket';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { NewOrderForm } from '@/components/forms/NewOrderForm';
-import { Plus, Clock, DollarSign, Utensils, Loader2 } from 'lucide-react';
+import { Plus, Clock, DollarSign, Utensils, Loader2, Wifi, WifiOff } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import type { ICreateOrder } from '@/services/orders';
+import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
+import { OrderStatus } from '@/types';
+
+const statusConfig: Record<OrderStatus, { label: string; className: string }> = {
+  PENDING: { label: 'Pendente', className: 'bg-warning/10 text-warning border-warning/30' },
+  PREPARING: { label: 'Em Preparo', className: 'bg-primary/10 text-primary border-primary/30' },
+  READY: { label: 'Pronto', className: 'bg-success/10 text-success border-success/30' },
+  DELIVERED: { label: 'Entregue', className: 'bg-sky-500/10 text-sky-500 border-sky-500/30' },
+  CANCELLED: { label: 'Cancelado', className: 'bg-destructive/10 text-destructive border-destructive/30' },
+  CONFIRMED: { label: 'Confirmado', className: 'bg-blue-500/10 text-blue-500 border-blue-500/30' },
+  PAID: { label: 'Pago', className: 'bg-emerald-500/10 text-emerald-500 border-emerald-500/30' },
+};
+
 
 const SessionDetailPage = () => {
   const { sessionId } = useParams<{ sessionId: string }>();
@@ -19,6 +34,7 @@ const SessionDetailPage = () => {
   const { data: session, isLoading: sessionLoading, isError: sessionIsError } = useSessionQuery(sessionId!);
   const { data: orders = [], isLoading: ordersLoading } = useOrdersBySessionQuery(sessionId!);
   const createOrderMutation = useCreateOrderMutation();
+  const { isConnected } = useSessionWebSocket(sessionId!);
 
   const handleCreateOrder = (values: Omit<ICreateOrder, 'sessionId'>) => {
     if (!sessionId) return;
@@ -50,12 +66,28 @@ const SessionDetailPage = () => {
       </DashboardLayout>
     );
   }
+  
+  const formattedSubtitle = `Sessão iniciada em ${format(new Date(session.createdAt), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}`;
 
   return (
     <DashboardLayout
       title={`Mesa ${session.table?.number}`}
-      subtitle={`Sessão iniciada em ${format(new Date(session.createdAt), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}`}
+      subtitle={formattedSubtitle}
     >
+        <div className="absolute top-6 right-6">
+            {isConnected ? (
+              <Badge variant="outline" className="border-success/30 bg-success/10 text-success">
+                <Wifi className="mr-2 h-4 w-4" />
+                Conectado
+              </Badge>
+            ) : (
+              <Badge variant="outline" className="border-destructive/30 bg-destructive/10 text-destructive">
+                <WifiOff className="mr-2 h-4 w-4" />
+                Desconectado
+              </Badge>
+            )}
+        </div>
+
       <div className="space-y-6">
         {/* KPI Cards */}
         <div className="grid gap-4 md:grid-cols-3">
@@ -125,7 +157,12 @@ const SessionDetailPage = () => {
                 {orders.map(order => (
                   <div key={order.id} className="border p-4 rounded-lg">
                     <div className="flex justify-between items-center mb-2">
-                      <span className="font-semibold">Pedido #{order.id.slice(-6)}</span>
+                      <div className="flex items-center gap-2">
+                        <span className="font-semibold">Pedido #{order.id.slice(-6)}</span>
+                        <Badge variant="outline" className={cn(statusConfig[order.status]?.className)}>
+                          {statusConfig[order.status]?.label || order.status}
+                        </Badge>
+                      </div>
                       <span className="text-sm text-muted-foreground">{format(new Date(order.createdAt), 'HH:mm')}</span>
                     </div>
                     <ul className="space-y-1 text-sm">
