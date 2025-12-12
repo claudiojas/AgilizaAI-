@@ -27,7 +27,7 @@ class PaymentUseCases {
         }
 
         // 3. Calcular o valor total devido
-        const totalAmount = pendingOrders.reduce((acc, order) => acc + Number(order.totalAmount), 0);
+        const totalAmount = pendingOrders.reduce((acc, order) => acc + (order.totalAmount.toNumber() || 0), 0);
 
         if (totalAmount <= 0) {
             // Se o total for zero, apenas marque os pedidos como pagos sem criar um pagamento.

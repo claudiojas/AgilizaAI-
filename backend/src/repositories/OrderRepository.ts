@@ -39,7 +39,7 @@ class OrderRepository implements IOrderMethods {
                 if (product.stock < item.quantity) {
                     throw new Error(`Not enough stock for product: ${product.name}. Available: ${product.stock}, Requested: ${item.quantity}`);
                 }
-                totalAmount += Number(product.price) * item.quantity;
+                totalAmount += (product.price.toNumber() || 0) * item.quantity;
             }
 
             // 3. Criar o Pedido (Order)
