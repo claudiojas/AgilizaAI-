@@ -48,6 +48,7 @@ export const useOpenSessionMutation = () => {
     mutationFn: tablesService.openSession,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tables'] });
+      queryClient.invalidateQueries({ queryKey: ['sessions', 'active'] });
       toast({
         title: 'Sessão aberta',
         description: 'A mesa está pronta para receber pedidos.',
@@ -70,6 +71,7 @@ export const useCloseSessionMutation = () => {
     mutationFn: tablesService.closeSession,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tables'] });
+      queryClient.invalidateQueries({ queryKey: ['sessions', 'active'] });
       toast({
         title: 'Sessão fechada',
         description: 'A conta foi encerrada com sucesso.',
