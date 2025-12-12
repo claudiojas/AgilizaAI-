@@ -48,10 +48,19 @@ export default function CartPage() {
       navigate('/orders');
     } catch (error: any) {
       console.error('Error creating order:', error);
-      toast.error('Erro ao enviar pedido. Tente novamente.', { 
-        id: 'order',
-        description: error.response?.data?.error || 'Erro desconhecido'
-      });
+      const errorMessage = error.response?.data?.error || 'Erro desconhecido';
+
+      if (errorMessage.includes('No cash register is currently open')) {
+        toast.error('Não é possível fazer o pedido agora.', {
+          id: 'order',
+          description: 'O caixa do estabelecimento está fechado. Por favor, tente mais tarde.',
+        });
+      } else {
+        toast.error('Erro ao enviar pedido. Tente novamente.', { 
+          id: 'order',
+          description: errorMessage,
+        });
+      }
     }
   };
 

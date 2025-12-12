@@ -4,11 +4,14 @@ import { OrderCard } from '@/components/mobile/OrderCard';
 import { OrderCardSkeleton } from '@/components/mobile/Skeleton';
 import { useSession } from '@/contexts/SessionContext';
 import { useOrders } from '@/hooks/useOrders';
+import { useOrderSubscription } from '@/hooks/useWebSocket';
 import type { Order } from '@/types';
+import { cn } from '@/lib/utils';
 
 export default function OrdersPage() {
   const { session } = useSession();
   const { data: orders = [], isLoading, isFetching, refetch } = useOrders(session?.id || null);
+  const { isConnected } = useOrderSubscription(session?.id || null);
 
   const handleRefresh = () => {
     refetch();
@@ -17,8 +20,8 @@ export default function OrdersPage() {
   const isRefreshing = isFetching && !isLoading;
 
   // Group orders by status
-  const activeOrders = orders.filter(o => o.status !== 'DELIVERED' && o.status !== 'PAID');
-  const completedOrders = orders.filter(o => o.status === 'DELIVERED' || o.status === 'PAID');
+  const activeOrders = orders.filter(o => o.status !== 'DELIVERED' && o.status !== 'PAID' && o.status !== 'CANCELLED');
+  const completedOrders = orders.filter(o => o.status === 'DELIVERED' || o.status === 'PAID' || o.status === 'CANCELLED');
 
   return (
     <motion.div
@@ -29,7 +32,13 @@ export default function OrdersPage() {
     >
       {/* Header */}
       <div className="px-4 pt-4 pb-2 flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-foreground">Meus Pedidos</h1>
+        <div className="flex items-center gap-2">
+            <h1 className="text-2xl font-bold text-foreground">Meus Pedidos</h1>
+            <div className={cn(
+                "h-2.5 w-2.5 rounded-full transition-colors",
+                isConnected ? "bg-success" : "bg-destructive"
+            )} />
+        </div>
         <button
           onClick={handleRefresh}
           disabled={isRefreshing}
