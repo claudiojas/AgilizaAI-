@@ -7,7 +7,7 @@
     "dev": "tsx src/server.ts",
     "build": "tsc",
     "test": "vitest",
-    "db:seed": "tsx prisma/seed.ts",
+    "db:seed": "npx dotenv-cli -c -- tsx prisma/seed.ts",
     "db:migrate": "prisma migrate dev",
     "db:generate": "prisma generate",
     "clean": "rm -rf dist node_modules"
