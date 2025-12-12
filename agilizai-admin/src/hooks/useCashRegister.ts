@@ -32,17 +32,18 @@ export const useOpenCashRegisterMutation = () => {
   });
 };
 
-export const useCloseCashRegisterMutation = () => {
+export const useCloseCashRegisterMutation = (options: { onSuccess?: (data: any) => void } = {}) => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: cashRegisterService.close,
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['activeCashRegister'] });
       toast({
         title: 'Caixa Fechado',
         description: 'O caixa foi fechado com sucesso.',
       });
+      options.onSuccess?.(data);
     },
     onError: (error: any) => {
       toast({

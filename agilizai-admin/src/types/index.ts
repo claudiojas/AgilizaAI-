@@ -117,3 +117,26 @@ export interface CashRegister {
   totalInvoiced?: number;
   totalPayments?: number;
 }
+
+// Interfaces for Cash Register Details
+export interface IPaymentBreakdown {
+  method: string;
+  total: number;
+}
+
+export interface ISoldProduct {
+  productId: string;
+  name: string;
+  quantity: number;
+  totalValue: number;
+}
+
+export interface IActiveCashRegisterDetails {
+  id: string;
+  openedAt: string;
+  initialValue: number;
+  totalPayments: number;
+  finalValue: number;
+  paymentsBreakdown: IPaymentBreakdown[];
+  soldProducts: ISoldProduct[];
+}

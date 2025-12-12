@@ -1,35 +1,10 @@
 import CashRegisterRepository from "../repositories/CashRegisterRepositorie";
 import { IActiveCashRegisterDetails, IOpenCashRegister, IPaymentBreakdown, ISoldProduct } from "../interfaces/cash-register.interface";
+import { CashRegister } from "@prisma/client";
 
 class CashRegisterUseCases {
-    async openCashRegister({ initialValue }: IOpenCashRegister) {
-        const openRegister = await CashRegisterRepository.findOpenRegister();
 
-        if (openRegister) {
-            throw new Error("A cash register is already open.");
-        }
-
-        return await CashRegisterRepository.create(initialValue || 0);
-    }
-
-    async closeCashRegister() {
-        const openRegister = await CashRegisterRepository.findOpenRegister();
-
-        if (!openRegister) {
-            throw new Error("No cash register is currently open.");
-        }
-
-        // A lógica de cálculo de totais pode ser adicionada aqui antes de fechar.
-        return await CashRegisterRepository.close(openRegister.id);
-    }
-
-    async getActiveCashRegisterDetails(): Promise<IActiveCashRegisterDetails> {
-        const openRegister = await CashRegisterRepository.findOpenRegister();
-
-        if (!openRegister) {
-            throw new Error("No cash register is currently open.");
-        }
-
+    private async _calculateRegisterSummary(openRegister: CashRegister): Promise<IActiveCashRegisterDetails> {
         const payments = await CashRegisterRepository.getPaymentsByRegisterId(openRegister.id);
         const orderItems = await CashRegisterRepository.getOrderItemsByRegisterId(openRegister.id);
 
@@ -60,16 +35,57 @@ class CashRegisterUseCases {
             }
             return acc;
         }, [] as ISoldProduct[]);
+        
+        const initialValue = openRegister.initialValue?.toNumber() ?? 0;
+        const finalValue = initialValue + totalPayments;
 
         return {
             id: openRegister.id,
             openedAt: openRegister.openedAt,
-            initialValue: openRegister.initialValue,
+            initialValue: initialValue,
             totalPayments,
-            expectedInCash: Number(openRegister.initialValue) + totalPayments,
+            finalValue: finalValue,
             paymentsBreakdown,
             soldProducts
         };
+    }
+
+    async openCashRegister({ initialValue }: IOpenCashRegister) {
+        const openRegister = await CashRegisterRepository.findOpenRegister();
+
+        if (openRegister) {
+            throw new Error("A cash register is already open.");
+        }
+
+        return await CashRegisterRepository.create(initialValue || 0);
+    }
+
+    async closeCashRegister() {
+        const openRegister = await CashRegisterRepository.findOpenRegister();
+
+        if (!openRegister) {
+            throw new Error("No cash register is currently open.");
+        }
+
+        const summary = await this._calculateRegisterSummary(openRegister);
+
+        await CashRegisterRepository.close(openRegister.id, {
+            totalPayments: summary.totalPayments,
+            finalValue: summary.finalValue,
+            paymentsBreakdown: summary.paymentsBreakdown,
+        });
+
+        return summary;
+    }
+
+    async getActiveCashRegisterDetails(): Promise<IActiveCashRegisterDetails> {
+        const openRegister = await CashRegisterRepository.findOpenRegister();
+
+        if (!openRegister) {
+            throw new Error("No cash register is currently open.");
+        }
+
+        return this._calculateRegisterSummary(openRegister);
     }
 }
 

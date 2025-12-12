@@ -16,13 +16,15 @@ class CashRegisterRepository {
         });
     }
 
-    async close(id: string) {
-        // A lógica de cálculo do valor final será tratada no UseCase
+    async close(id: string, summary: { totalPayments: number; finalValue: number; paymentsBreakdown: any }) {
         return await prisma.cashRegister.update({
             where: { id },
             data: {
                 closedAt: new Date(),
                 status: 'CLOSED',
+                totalPayments: summary.totalPayments,
+                finalValue: summary.finalValue,
+                paymentsBreakdown: summary.paymentsBreakdown,
             }
         });
     }

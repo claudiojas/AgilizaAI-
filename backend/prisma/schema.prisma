@@ -130,11 +130,14 @@ model Payment {
 
 // Tabela de Caixa
 model CashRegister {
-  id           String             @id @default(cuid())
-  openedAt     DateTime           @default(now())
-  closedAt     DateTime?
-  status       CashRegisterStatus @default(OPEN)
-  initialValue Decimal?           @db.Decimal(10, 2)
+  id                String             @id @default(cuid())
+  openedAt          DateTime           @default(now())
+  closedAt          DateTime?
+  status            CashRegisterStatus @default(OPEN)
+  initialValue      Decimal            @db.Decimal(10, 2)
+  totalPayments     Decimal?           @db.Decimal(10, 2)
+  finalValue        Decimal?           @db.Decimal(10, 2)
+  paymentsBreakdown Json?
 
   // Relacionamentos
   orders   Order[]
