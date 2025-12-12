@@ -76,6 +76,13 @@ class ProductsRepository implements IProductsMethods {
     });
     return product;
   }
+
+  async deleteProduct(id: string): Promise<IReturnProductsCreate> {
+    const product = await prisma.product.delete({
+      where: { id },
+    });
+    return product;
+  }
 }
 
 export default new ProductsRepository();

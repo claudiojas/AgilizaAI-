@@ -56,6 +56,7 @@ model Product {
   name        String
   description String?
   price       Decimal  @db.Decimal(10, 2)
+  imageUrl    String?  // Campo para a URL da imagem
   stock       Int      @default(0)
   categoryId  String
   isActive    Boolean  @default(true)

@@ -65,6 +65,14 @@ class ProductUseCases {
     }
     return ProductsRepository.markAsAvailable(id);
   }
+
+  async deleteProduct(id: string) {
+    const productExists = await ProductsRepository.findProductById(id);
+    if (!productExists) {
+      throw new Error("Product not found");
+    }
+    return ProductsRepository.deleteProduct(id);
+  }
 }
 
 export default new ProductUseCases();

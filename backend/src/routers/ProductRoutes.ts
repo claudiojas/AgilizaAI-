@@ -84,4 +84,19 @@ export async function productRoutes(app: FastifyInstance) {
       return reply.status(500).send({ success: false, error: 'Internal server error' });
     }
   });
+
+  app.delete<{ Params: { id: string } }>('/products/:id', async (request, reply) => {
+    const { id } = request.params;
+    try {
+      await ProductUseCases.deleteProduct(id);
+      return reply.status(204).send();
+    } catch (error: any) {
+      console.error(`Error deleting product ${id}:`, error);
+      if (error.message === 'Product not found') {
+        return reply.status(404).send({ success: false, error: error.message });
+      }
+      // Add more specific error handling if needed, e.g., if product is referenced elsewhere
+      return reply.status(500).send({ success: false, error: 'Internal server error' });
+    }
+  });
 }
